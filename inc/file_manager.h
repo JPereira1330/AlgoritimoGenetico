@@ -10,7 +10,9 @@
 #define INC_FILE_MANAGER_H_
  
  #include "param.h"
- #include "stdbool.h"
+
+ #include <stdbool.h>
+ #include <sys/types.h>
 
 /**
  * @brief Abre o arquivo solicitado e armazena em memoria
@@ -22,6 +24,26 @@
  * @return false    Para erro
  */
 bool file_manager_open(PARAM param, const char *file, const char *mode);
+
+/**
+ * @brief Escreve no arquivo ja aberto
+
+ * @param param     Parametros do sistema
+ * @param buffer    Buffer a ser salvo
+ * @param len       Tamanho do buffer a ser 
+ * @return int      (+) Para bytes salvos, (-) para erro.
+ */
+int file_manager_write(PARAM param, const char *buffer, uint len);
+
+/**
+ * @brief Le o arquivo ja aberto
+ * 
+ * @param param     Parametros do sistema
+ * @param buffer    Buffer a ser preenchido
+ * @param len_max   Tamanho maximo do buffer
+ * @return int      (+) Para bytes salvos, (-) para erro.
+ */
+int file_manager_read(PARAM param, char *buffer, uint len_max);
 
 /**
  * @brief Fecha o arquivo armazenado em memoria
