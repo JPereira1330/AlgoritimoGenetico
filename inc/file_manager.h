@@ -6,8 +6,8 @@
  * @copyright Copyright (c) 2022
  */
 
-#ifndef INC_FILE_MANAGER_H_
-#define INC_FILE_MANAGER_H_
+#ifndef _INC_FILE_MANAGER_H_
+#define _INC_FILE_MANAGER_H_
  
  #include "param.h"
 
@@ -54,4 +54,4 @@ int file_manager_read(PARAM param, char *buffer, uint len_max);
  */
 bool file_manager_close(PARAM param);
 
-#endif  // INC_FILE_MANAGER_H_
+#endif  // _INC_FILE_MANAGER_H_

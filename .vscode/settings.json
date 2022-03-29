@@ -1,5 +1,16 @@
 {
     "files.associations": {
-        "file_manager.h": "c"
-    }
+        "file_manager.h": "c",
+        "db_manager.h": "c",
+        "internal_defines.h": "c",
+        "cstdlib": "c",
+        "type_traits": "c",
+        "genetic_manager.h": "c",
+        "type_structs.h": "c"
+    },
+    "C_Cpp.errorSquiggles": "Disabled",
+    "C_Cpp.intelliSenseEngine": "Tag Parser",
+    "C_Cpp.default.includePath": [
+        "{$workspaceFolder}/inc/*"
+    ],
 }

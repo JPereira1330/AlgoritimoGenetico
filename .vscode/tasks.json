@@ -1,0 +1,26 @@
+{
+    "tasks": [
+        {
+            "type": "cppbuild",
+            "label": "C/C++: gcc arquivo de build ativo",
+            "command": "/usr/bin/gcc",
+            "args": [
+                "-fdiagnostics-color=always",
+                "${workspaceFolder}/src/*.c",
+                "-o",
+                "${workspaceFolder}/build/algoritimo",
+                "-I",
+                "${workspaceFolder}/inc/"
+            ],
+            "options": {
+                "cwd": "${fileDirname}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": "build",
+            "detail": "Tarefa gerada pelo Depurador."
+        }
+    ],
+    "version": "2.0.0"
+}

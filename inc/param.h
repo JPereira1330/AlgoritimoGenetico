@@ -7,8 +7,8 @@
  * @copyright Copyright (c) 2022
  */
 
-#ifndef INC_PARAM_H_
-#define INC_PARAM_H_
+#ifndef _INC_PARAM_H_
+#define _INC_PARAM_H_
 
 ///
 /// DEPENDENCIAS
@@ -21,6 +21,9 @@
 ///
 
 typedef struct strct_param {
+    int epoch;
+    float budget;
+
     FILE *file_open;
 } *PARAM;
 
@@ -40,4 +43,4 @@ PARAM param_init();
  */
 void param_free(PARAM param);
 
-#endif  // INC_PARAM_H_
+#endif  // _INC_PARAM_H_

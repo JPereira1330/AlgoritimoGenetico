@@ -21,7 +21,9 @@ bool file_manager_open(PARAM param, const char *file, const char *mode) {
         return false;
     }
 
+    // Configurando arquivo
     param->file_open = file_local;
+    fseek(param->file_open, 0, SEEK_SET);
 
     return true;
 }
@@ -39,7 +41,6 @@ int file_manager_write(PARAM param, const char *buffer, uint len) {
     return fwrite(buffer, sizeof(char), len, param->file_open);
 }
 
-// TODO: Arruma o read, deixar mais performatico
 int file_manager_read(PARAM param, char *buffer, uint len_max) {
     int ret;
     int bytes;
@@ -52,12 +53,13 @@ int file_manager_read(PARAM param, char *buffer, uint len_max) {
         return -2;
     }
 
-    fseek(param->file_open, 0, SEEK_SET);
     for(ret = 1, bytes = 0; bytes < len_max && ret != 0;bytes++){
         ret = fread(buffer+bytes, sizeof(char), sizeof(char), param->file_open);
+        if(*(buffer+bytes) == '\n')
+            return bytes;
     }
 
-    return bytes;
+    return 0;
 }
 
 bool file_manager_close(PARAM param) {

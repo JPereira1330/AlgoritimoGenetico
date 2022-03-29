@@ -13,8 +13,10 @@ BUILDS_PATH = build/
 SOURCES := $(wildcard $(SOURCE_PATH)*.c)
 BUILDER := $(pathsubst $(SOURCE_PATH)/%.c, $(BUILDS_PATH)/%.o, $(SOURCES))
 
+CFLAG += -Wall
 CFLAG += -I $(INCLUD_PATH)
 CFLAG += -o $(BUILDS_PATH)$(PROJECT_NAME)
+CFLAG += -O0 -g3
 
 ###
 # FUNCTIONS

@@ -1,25 +1,36 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-
 #include "param.h"
-#include "file_manager.h"
 
-void main() {
+#include <stdlib.h>
+#include <stdbool.h>
 
-    PARAM param;
-    char buffer[100];
+#include "db_manager.h"
+#include "type_structs.h"
+#include "genetic_manager.h"
+
+int main() {
+
+    bool ret;
+    PARAM param;   
+    MDB database;
+    POP population, pop_better;
 
     param = param_init();
+    if(param == NULL) {
+        return EXIT_FAILURE;
+    }
 
-    file_manager_open(param, "teste.txt", "w");
-    file_manager_write(param, "abcde", strlen("teste"));
-    file_manager_close(param);
+    param->epoch = 25;
+    param->budget = 5000;
 
-    file_manager_open(param, "teste.txt", "r");
-    file_manager_read(param, buffer, sizeof(buffer));
-    printf("Result: | %c | %s", buffer[0], buffer);
-    file_manager_close(param);
+    ret = db_manager_load_database(param, &database);
+    if(ret == false) {
+        return EXIT_FAILURE;
+    }
+
+    genetic_manager_create_population(param, database, &population);
+    genetic_manager_get_better(param, population, &pop_better);
+
     param_free(param);
 
+    return EXIT_SUCCESS;
 }
