@@ -12,7 +12,7 @@ int main() {
     bool ret;
     PARAM param;   
     MDB database;
-    POP population, pop_better;
+    POP population;
 
     param = param_init();
     if(param == NULL) {
@@ -27,8 +27,11 @@ int main() {
         return EXIT_FAILURE;
     }
 
-    genetic_manager_create_population(param, database, &population);
-    genetic_manager_get_better(param, population, &pop_better);
+    population = genetic_manager_new();
+    genetic_manager_create_population(param, database, population);
+    genetic_manager_recreate_population(param, database, population);
+    genetic_manager_free(population);
+
 
     param_free(param);
 

@@ -19,7 +19,7 @@ typedef struct stc_dna {
 typedef struct stc_population {
     int last_dna;
     DNA dna[MAX_LEN_POPULATION];
-} POP;
+} *POP;
 
 typedef struct _stc_database_row {
     unsigned int id;
