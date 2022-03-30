@@ -1,5 +1,6 @@
 #include "genetic_manager.h"
 
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -79,14 +80,34 @@ bool genetic_manager_recreate_population(PARAM param, MDB database, POP populati
 }
 
 bool genetic_manager_get_mutable(PARAM param, POP pop_better, POP pop_mutable) {
-    int i, j;
+    int index;
+    float quantia;
+    POP auxiliar;
 
-    for(i = 0; i < MAX_BETTER_POP; i++){
-        printf("%d - Carrinho: %d | R$ %.2f\n", i, pop_better->dna[i].amount_itens, pop_better->dna[i].itens_value);
-        for (j = 0; j < pop_better->dna[i].amount_itens; j++) {
-            printf("\t %d - %s %.2f\n",j, pop_better->dna[i].itens[j].iten, pop_better->dna[i].itens[j].iten_value);
+    auxiliar = genetic_manager_new();
+
+    index = 0;
+    do{
+        /// Atribuindo modelo base
+        pop_mutable->dna[index] = pop_better->dna[index];
+
+        /// Realizando a mutacao => DNA 1 [ AAAA AAAA ] DNA 2 [ BBBB BBBB ] => DNA M [ AAAA BBBB ]
+        quantia = floor(pop_better->dna[index+1].amount_itens/2);
+        for (int j = quantia; j < pop_better->dna[index].amount_itens; j++) {
+            auxiliar->dna[0].itens[0].iten_value = pop_mutable->dna[index].itens[j].iten_value;
+            pop_mutable->dna[index].itens[j].iten_value = pop_mutable->dna[index+1].itens[j].iten_value;
+            pop_mutable->dna[index+1].itens[j].iten_value = auxiliar->dna[0].itens[0].iten_value;
         }
+
+        index+=2;
+        pop_mutable->last_dna = index;
+    } while (index < MAX_BETTER_POP);
+
+    for (int j = quantia; j < pop_better->dna[0].amount_itens; j++) {
+        printf("%.2f => %.2f\n", pop_better->dna[0].itens[j].iten_value, pop_mutable->dna[0].itens[j].iten_value);
     }
+
+    genetic_manager_free(auxiliar);
 
     return true;
 }
