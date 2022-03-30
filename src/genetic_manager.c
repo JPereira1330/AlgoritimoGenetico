@@ -71,7 +71,7 @@ bool genetic_manager_recreate_population(PARAM param, MDB database, POP populati
     pop_mutable = genetic_manager_new();
 
     genetic_manager_get_better(param, population, pop_better);
-    //genetic_manager_get_mutable(param, pop_better, pop_mutable);
+    genetic_manager_get_mutable(param, pop_better, pop_mutable);
 
     genetic_manager_free(pop_mutable);
     genetic_manager_free(pop_better);
@@ -82,9 +82,9 @@ bool genetic_manager_get_mutable(PARAM param, POP pop_better, POP pop_mutable) {
     int i, j;
 
     for(i = 0; i < MAX_BETTER_POP; i++){
-        //printf("%d - Carrinho: %d | R$ %.2f\n", i, pop_better->dna[i].amount_itens, pop_better->dna[i].itens_value);
-        for (j = 0; j <= pop_better->dna[i].amount_itens; j++) {
-            //printf("\t %d - %s %.2f\n",j, pop_better->dna[i].itens[j].iten, pop_better->dna[i].itens[j].iten_value);
+        printf("%d - Carrinho: %d | R$ %.2f\n", i, pop_better->dna[i].amount_itens, pop_better->dna[i].itens_value);
+        for (j = 0; j < pop_better->dna[i].amount_itens; j++) {
+            printf("\t %d - %s %.2f\n",j, pop_better->dna[i].itens[j].iten, pop_better->dna[i].itens[j].iten_value);
         }
     }
 
@@ -105,7 +105,6 @@ bool genetic_manager_get_better(PARAM param, POP population, POP pop_out) {
             if (amount < population->dna[j].amount_itens && population->dna[j].selecter == false) {
                 index = j;
                 amount = population->dna[j].amount_itens;
-                printf("Select: [%d/%d] %d - %s\n", i,j, population->dna[j].amount_itens, population->dna[j].itens[0].iten);
             }
         }
         population->dna[index].selecter = true;
@@ -116,11 +115,9 @@ bool genetic_manager_get_better(PARAM param, POP population, POP pop_out) {
         pop_out->dna[i].amount_itens =  population->dna[index].amount_itens;
         pop_out->dna[i].itens_value =  population->dna[index].itens_value;
         for (j = 0; j < pop_out->dna[i].amount_itens; j++) {
-            snprintf(pop_out->dna[i].itens[j].iten, MAX_LEN_NAME_ITEN, "%s", population->dna[i].itens[j].iten);
-            pop_out->dna[i].itens[j].iten_value = population->dna[i].itens[j].iten_value;
+            snprintf(pop_out->dna[i].itens[j].iten, MAX_LEN_NAME_ITEN, "%s", population->dna[index].itens[j].iten);
+            pop_out->dna[i].itens[j].iten_value = population->dna[index].itens[j].iten_value;
         }
-
-        printf("Melhor: [%d/%d] %d - %s\n", i,j, pop_out->dna[i].amount_itens, pop_out->dna[i].itens[0].iten);
     }
 
     return true;

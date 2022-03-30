@@ -5,25 +5,11 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "gcc - Criar e depurar o arquivo ativo",
-            "type": "cppdbg",
+            "type": "by-gdb",
             "request": "launch",
-            "program": "${workspaceFolder}/build/algoritimo",
-            "args": [],
-            "stopAtEntry": false,
-            "cwd": "${fileDirname}",
-            "environment": [],
-            "externalConsole": false,
-            "MIMode": "gdb",
-            "setupCommands": [
-                {
-                    "description": "Habilitar a reformatação automática para gdb",
-                    "text": "-enable-pretty-printing",
-                    "ignoreFailures": true
-                }
-            ],
-            "preLaunchTask": "C/C++: gcc arquivo de build ativo",
-            "miDebuggerPath": "/usr/bin/gdb"
+            "name": "Launch(gdb)",
+            "program": "./build/TESTE",//"${fileBasenameNoExtension}",
+            "cwd": "${workspaceRoot}"
         }
     ]
 }
