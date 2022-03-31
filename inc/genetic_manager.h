@@ -15,5 +15,6 @@ bool genetic_manager_recreate_population(PARAM param, MDB database, POP populati
 
 bool genetic_manager_get_mutable(PARAM param, POP pop_better, POP pop_mutable);
 bool genetic_manager_get_better(PARAM param, POP population, POP pop_out);
+void genetic_manager_debug_better(PARAM param, POP population, int quant);
 
 #endif  // _INC_GENETIC_MANAGER_H_
