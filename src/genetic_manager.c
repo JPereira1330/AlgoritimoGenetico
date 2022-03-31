@@ -73,38 +73,81 @@ bool genetic_manager_recreate_population(PARAM param, MDB database, POP populati
 
     genetic_manager_get_better(param, population, pop_better);
     genetic_manager_get_mutable(param, pop_better, pop_mutable);
+    
+    for(int i = 0; i <= pop_better->last_dna; i++) {
+        printf("%d - %d (R$ %.2f) ; ",i ,pop_better->dna[i].amount_itens, pop_better->dna[i].itens_value);
+        if(i <= pop_mutable->last_dna) {
+            printf("%d (R$ %.2f) ",pop_mutable->dna[i].amount_itens, pop_mutable->dna[i].itens_value);
+        }
+        printf("\n");
+    }
+
+    /// Adicionando a populacao
+    memset(population, 0, sizeof(struct stc_population));
+    for(int index = 0; index <= (pop_better->last_dna+pop_mutable->last_dna); index++) {
+        population->last_dna = index;
+        if(index <= pop_better->last_dna) {
+            population->dna[index].selecter = pop_better->dna[index].selecter;
+            population->dna[index].itens_value = pop_better->dna[index].itens_value;
+            population->dna[index].amount_itens = pop_better->dna[index].amount_itens;
+            for (int j = 0; j < pop_better->dna[index].amount_itens; j++) {
+                population->dna[index].itens[j].iten_value = pop_better->dna[index].itens[j].iten_value;
+                snprintf(population->dna[index].itens[j].iten, MAX_LEN_NAME_ITEN, "%s", pop_better->dna[index].itens[j].iten);
+            }
+        } else {
+            population->dna[index].selecter = pop_mutable->dna[index-pop_better->last_dna].selecter;
+            population->dna[index].itens_value = pop_mutable->dna[index-pop_better->last_dna].itens_value;
+            population->dna[index].amount_itens = pop_mutable->dna[index-pop_better->last_dna].amount_itens;
+            for (int j = 0; j < pop_mutable->dna[index-pop_better->last_dna].amount_itens; j++) {
+                population->dna[index].itens[j].iten_value = pop_mutable->dna[index-pop_better->last_dna].itens[j].iten_value;
+                snprintf(population->dna[index].itens[j].iten, MAX_LEN_NAME_ITEN, "%s", pop_mutable->dna[index-pop_better->last_dna].itens[j].iten);
+            }
+        }
+        printf(" %d - %d (R$ %.2f) \n", index, population->dna[index].amount_itens, population->dna[index].itens_value);
+    }
 
     genetic_manager_free(pop_mutable);
     genetic_manager_free(pop_better);
+
     return true;
 }
 
 bool genetic_manager_get_mutable(PARAM param, POP pop_better, POP pop_mutable) {
-    int index;
     float quantia;
     POP auxiliar;
+    int decress;
+    int index, count;
 
     auxiliar = genetic_manager_new();
 
+    count = 0;
     index = 0;
-    do{
-        /// Atribuindo modelo base
-        pop_mutable->dna[index] = pop_better->dna[index];
-
-        /// Realizando a mutacao => DNA 1 [ AAAA AAAA ] DNA 2 [ BBBB BBBB ] => DNA M [ AAAA BBBB ]
+    decress = 0;
+    while(index < MAX_BETTER_POP) {
+        auxiliar->dna[index] = pop_better->dna[index];
+        pop_mutable->dna[count-decress].itens_value = 0;
         quantia = floor(pop_better->dna[index+1].amount_itens/2);
-        for (int j = quantia; j < pop_better->dna[index].amount_itens; j++) {
-            auxiliar->dna[0].itens[0].iten_value = pop_mutable->dna[index].itens[j].iten_value;
-            pop_mutable->dna[index].itens[j].iten_value = pop_mutable->dna[index+1].itens[j].iten_value;
-            pop_mutable->dna[index+1].itens[j].iten_value = auxiliar->dna[0].itens[0].iten_value;
+        for (int j = 0; j < pop_better->dna[index].amount_itens; j++) {
+            if(j < quantia) {
+                pop_mutable->dna[count-decress].itens[j].iten_value = pop_better->dna[index].itens[j].iten_value;
+                snprintf(pop_mutable->dna[count-decress].itens[j].iten, MAX_LEN_NAME_ITEN, "%s", pop_better->dna[index].itens[j].iten);
+            } else {
+                pop_mutable->dna[count-decress].itens[j].iten_value = pop_better->dna[index+1].itens[j].iten_value;
+                snprintf(pop_mutable->dna[count-decress].itens[j].iten, MAX_LEN_NAME_ITEN, "%s", pop_better->dna[index+1].itens[j].iten);
+            }
+            pop_mutable->dna[count-decress].amount_itens = j;
+            pop_mutable->dna[count-decress].itens_value += pop_mutable->dna[count-decress].itens[j].iten_value;
+        }
+        
+        if( pop_mutable->dna[count-decress].itens_value > param->budget ){
+            decress++;
         }
 
-        index+=2;
-        pop_mutable->last_dna = index;
-    } while (index < MAX_BETTER_POP);
+        pop_mutable->last_dna = count-decress;
+        pop_mutable->dna[count-decress].selecter = false;
 
-    for (int j = quantia; j < pop_better->dna[0].amount_itens; j++) {
-        printf("%.2f => %.2f\n", pop_better->dna[0].itens[j].iten_value, pop_mutable->dna[0].itens[j].iten_value);
+        count++;
+        index+=2;
     }
 
     genetic_manager_free(auxiliar);
