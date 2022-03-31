@@ -10,7 +10,7 @@
 POP genetic_manager_new();
 void genetic_manager_free(POP population);
 
-bool genetic_manager_create_population(PARAM param, MDB database, POP population);
+bool genetic_manager_create_population(PARAM param, MDB database, POP population, int init);
 bool genetic_manager_recreate_population(PARAM param, MDB database, POP population);
 
 bool genetic_manager_get_mutable(PARAM param, POP pop_better, POP pop_mutable);

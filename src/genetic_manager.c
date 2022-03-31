@@ -26,14 +26,14 @@ void genetic_manager_free(POP population) {
     }
 }
 
-bool genetic_manager_create_population(PARAM param, MDB database, POP population) {
+bool genetic_manager_create_population(PARAM param, MDB database, POP population, int init) {
     
     float value;
     int index, i,j;
     _DB_ROW db_row;
 
     population->last_dna = 0;
-    for (i = 0; i < MAX_POPULATION; i++) {
+    for (i = init; i < MAX_POPULATION; i++) {
         for (value = 0, j = 0; ; j++) {
             // Capturando um indice aleatorio
             index = random() % database.last_id;
@@ -65,9 +65,6 @@ bool genetic_manager_create_population(PARAM param, MDB database, POP population
 }
 
 bool genetic_manager_recreate_population(PARAM param, MDB database, POP population) {
-    int j, value;
-    int index;
-    _DB_ROW db_row;
     POP pop_better;
     POP pop_mutable;
 
@@ -101,33 +98,7 @@ bool genetic_manager_recreate_population(PARAM param, MDB database, POP populati
     }
 
     /// Criando o restante
-    for (int i = population->last_dna+1; i < MAX_POPULATION; i++) {
-        for (value = 0, j = 0; ; j++) {
-            // Capturando um indice aleatorio
-            index = random() % database.last_id;
-            db_row = db_manager_ret_row_by_index(param, database, index);
-
-            // Validado se pode continuar
-            if(j == 0 && db_row.value > param->budget){
-                j--;
-                continue;
-            }
-
-            value += db_row.value;
-            if(value > param->budget){
-                break;
-            }
-
-            // Salvando dados
-            population->dna[i].selecter = false;
-            population->dna[i].amount_itens = j;
-            population->dna[i].itens_value = value;
-            population->dna[i].itens[j].iten_value = db_row.value;
-            snprintf(population->dna[i].itens[j].iten, strlen(db_row.iten), "%s", db_row.iten);
-        }
-
-        population->last_dna++;
-    }
+    genetic_manager_create_population(param, database, population, population->last_dna);
 
     genetic_manager_free(pop_mutable);
     genetic_manager_free(pop_better);
@@ -211,15 +182,29 @@ bool genetic_manager_get_better(PARAM param, POP population, POP pop_out) {
 }
 
 void genetic_manager_debug_better(PARAM param, POP population, int quant) {
+    int max;
+    int index;
 
-    POP pop_better;
-    pop_better = genetic_manager_new();
+    for(int i = 0; i <= population->last_dna; i++) { 
+        population->dna[i].selecter = false;
+    }
 
-    genetic_manager_get_better(param, population, pop_better);
-
-    for(int i = 0; i < quant && i <= pop_better->last_dna; i++) {
-        printf(" [ %d ] %d (R$ %.2f) \t", i, pop_better->dna[i].amount_itens, pop_better->dna[i].itens_value);
+    for(int count = 0; count < quant; count++) {
+        max = 0;
+        index = 0;
+        for(int i = 0; i <= population->last_dna; i++) {
+            if(max < population->dna[i].amount_itens && population->dna[i].selecter == false) {
+                max = population->dna[i].amount_itens;
+                index = i;
+                population->dna[i].selecter = true;
+            }
+        }
+        printf(" [ %d/%d ] %d (R$ %.2f) \t", count, index, population->dna[index].amount_itens, population->dna[index].itens_value);
     }
     printf("\n\n");
+
+    for(int i = 0; i <= population->last_dna; i++) { 
+        population->dna[i].selecter = false;
+    }
 
 }

@@ -29,11 +29,11 @@ int main() {
 
     population = genetic_manager_new();
 
-    genetic_manager_create_population(param, database, population);
+    genetic_manager_create_population(param, database, population, 0);
     for(int i = 0; i <= param->epoch; i++) {
         printf(" => EPOCA %d\n", i);
         genetic_manager_recreate_population(param, database, population);
-        genetic_manager_debug_better(param, population, 5);
+        genetic_manager_debug_better(param, population, 8);
     }
 
     genetic_manager_free(population);
