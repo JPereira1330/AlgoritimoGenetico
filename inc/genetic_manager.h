@@ -1,20 +1,41 @@
+/**
+ * @file    genetic_manager.h
+ * @author  José C. Pereira (jpereira1330@gmail.com)
+ * @date    2022-03-31
+ * @copyright Copyright (c) 2022
+ */
+
 #ifndef _INC_GENETIC_MANAGER_H_
 #define _INC_GENETIC_MANAGER_H_
 
 #include <stdbool.h>
 
 #include "param.h"
-#include "type_structs.h"
-#include "internal_defines.h"
+#include "internal_types.h"
 
-POP genetic_manager_new();
-void genetic_manager_free(POP population);
+/**
+ * @brief Carrega do banco de dados e preenche os dados de forma aleatoria
+ * 
+ * @param param                 Parametros do sistema
+ * @param population            Ponteiro da populacao
+ * @param amount_population     Tamanho da populacao 
+ * @return true                 Para sucesso na operacao
+ * @return false                Para erro na operacao
+ */
+bool genetic_manager_create_population(PARAM param, PERSON *population, int amount_population);
 
-bool genetic_manager_create_population(PARAM param, MDB database, POP population, int init);
-bool genetic_manager_recreate_population(PARAM param, MDB database, POP population);
+/**
+ * @brief 
+ * 
+ * @param param                 Parametros do sistema
+ * @param population            Ponteiro da populacao
+ * @param amount_population     Tamanho da populacao 
+ * @return true                 Para sucesso na operacao
+ * @return false                Para erro na operacao
+ */
+bool genetic_manager_mate_population(PARAM param, PERSON *population, int amount_population);
 
-bool genetic_manager_get_mutable(PARAM param, POP pop_better, POP pop_mutable);
-bool genetic_manager_get_better(PARAM param, POP population, POP pop_out);
-void genetic_manager_debug_better(PARAM param, POP population, int quant);
+void genetic_manager_mutable_population();
+void genetic_manager_kill_population();
 
 #endif  // _INC_GENETIC_MANAGER_H_

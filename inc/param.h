@@ -15,6 +15,9 @@
 ///
 
 #include <stdio.h>
+#include <time.h>
+
+#include "internal_types.h"
 
 ///
 /// DECLARACAO DAS STRUCTS
@@ -23,8 +26,8 @@
 typedef struct strct_param {
     int epoch;
     float budget;
-
-    FILE *file_open;
+    DB_ITENS db_itens[DEF_MAX_LEN_ITENS];
+    clock_t begin;
 } *PARAM;
 
 ///

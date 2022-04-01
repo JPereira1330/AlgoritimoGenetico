@@ -8,53 +8,38 @@
 
 #include "file_manager.h"
 
-bool file_manager_open(PARAM param, const char *file, const char *mode) {
-
-    FILE *file_local;
-
-    if(param == NULL) {
-        return false;
-    }
-
-    file_local = fopen(file, mode);
-    if(file_local == NULL){
-        return false;
+FILE *file_manager_open(const char *file, const char *mode) {
+    FILE *file_id;
+    
+    file_id = fopen(file, mode);
+    if(file_id == NULL){
+        return NULL;
     }
 
     // Configurando arquivo
-    param->file_open = file_local;
-    fseek(param->file_open, 0, SEEK_SET);
+    fseek(file_id, 0, SEEK_SET);
 
-    return true;
+    return file_id;
 }
 
-int file_manager_write(PARAM param, const char *buffer, uint len) {
-
-    if (param == NULL || param->file_open == NULL) {
-        return -1;
-    }
-
+int file_manager_write(FILE *file_id, const char *buffer, uint len) {
     if (buffer == NULL || len <= 0) {
         return -2;
     }
 
-    return fwrite(buffer, sizeof(char), len, param->file_open);
+    return fwrite(buffer, sizeof(char), len, file_id);
 }
 
-int file_manager_read(PARAM param, char *buffer, uint len_max) {
+int file_manager_read(FILE *file_id, char *buffer, uint len_max) {
     int ret;
     int bytes;
-
-    if (param == NULL || param->file_open == NULL) {
-        return -1;
-    }
 
     if (buffer == NULL || len_max <= 0) {
         return -2;
     }
 
     for(ret = 1, bytes = 0; bytes < len_max && ret != 0;bytes++){
-        ret = fread(buffer+bytes, sizeof(char), sizeof(char), param->file_open);
+        ret = fread(buffer+bytes, sizeof(char), sizeof(char), file_id);
         if(*(buffer+bytes) == '\n')
             return bytes;
     }
@@ -62,14 +47,10 @@ int file_manager_read(PARAM param, char *buffer, uint len_max) {
     return 0;
 }
 
-bool file_manager_close(PARAM param) {
+bool file_manager_close(FILE *file_id) {
     int ret;
 
-    if (param == NULL || param->file_open == NULL) {
-        return false;
-    }
-
-    ret = fclose(param->file_open);
+    ret = fclose(file_id);
     if (ret != 0) {
         return false;
     }

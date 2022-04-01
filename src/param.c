@@ -21,6 +21,8 @@ PARAM param_init() {
     }
 
     memset(param, 0, sizeof(struct strct_param));
+    
+    param->begin = clock();
 
     return param;
 }

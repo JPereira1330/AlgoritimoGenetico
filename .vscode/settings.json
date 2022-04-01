@@ -7,7 +7,14 @@
         "type_traits": "c",
         "genetic_manager.h": "c",
         "type_structs.h": "c",
-        "limits": "c"
+        "limits": "c",
+        "internal_types.h": "c",
+        "stdbool.h": "c",
+        "types.h": "c",
+        "string.h": "c",
+        "cmath": "c",
+        "typeinfo": "c",
+        "cstdio": "c"
     },
     "C_Cpp.errorSquiggles": "Disabled",
     "C_Cpp.intelliSenseEngine": "Tag Parser",
