@@ -19,6 +19,7 @@ int main(void) {
     param->epoch = 25;
     param->budget = 5000;
     genetic_manager_create_population(param, person, DEF_MAX_LEN_POPULATION);
+    genetic_manager_mate_population(param, person, DEF_MAX_LEN_POPULATION);
 
     param_free(param);
 

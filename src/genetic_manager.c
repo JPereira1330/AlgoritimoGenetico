@@ -15,6 +15,12 @@
 #include "file_manager.h"
 
 //////////////////////////////////////////
+///     VARIAVEIS GLOBAIS
+//////////////////////////////////////////
+
+PERSON new_pop[DEF_MAX_LEN_POPULATION];
+
+//////////////////////////////////////////
 ///     DECLARACAO DOS METODOS PRIVADOS
 //////////////////////////////////////////
 
@@ -37,14 +43,39 @@ bool genetic_manager_create_population(PARAM param, PERSON *population, int amou
 }
 
 bool genetic_manager_mate_population(PARAM param, PERSON *population, int amount_population) {
-    PERSON new_pop[DEF_MAX_LEN_POPULATION*DEF_MULT_MATE];
+    int index_init;
 
-    for (int i = 0; i < amount_population; i++) {
-        for (int j = 0; j < DEF_MULT_MATE; j++) {
-            /// multiplicar sempre com os proximos DEF_MULT_MATE dna
+    log(param, INIT, "Cruzando populacao");
+    for(int index = 0; index < DEF_MAX_LEN_POPULATION; index++) {
+        index_init = index+1;
+        for(int i_itens = 0; i_itens < DEF_MAX_LEN_ITENS; i_itens++) {
+            for(int i_pop = index_init; i_pop <= index_init; i_pop++) {
+                if(i_itens > (DEF_MAX_LEN_ITENS/2)) {
+                    if(i_pop == DEF_MAX_LEN_POPULATION) {
+                        new_pop[index].itens[i_itens] = population[0].itens[i_itens];
+                    }else{
+                        new_pop[index].itens[i_itens] = population[i_pop].itens[i_itens];
+                    }
+                }else {
+                    new_pop[index].itens[i_itens] = population[index].itens[i_itens];
+                }
+            }
         }
     }
-    
+    log(param, DONE, "Cruzando populacao");
+
+    log(param, INIT, "Atualizando valores da nova populacao");
+    for(int i_pop = 0; i_pop < DEF_MAX_LEN_POPULATION; i_pop++) {
+        new_pop[i_pop].total_value = 0;
+        new_pop[i_pop].amount_itens = 0;
+        for(int i_itens = 0; i_itens < DEF_MAX_LEN_ITENS; i_itens++) {
+            if(new_pop[i_pop].itens[i_itens]){
+                new_pop[i_pop].amount_itens++;
+                new_pop[i_pop].total_value+=param->db_itens[i_itens].value;
+            }
+        }
+    } 
+    log(param, DONE, "Atualizando valores da nova populacao");
 
     return true;
 }

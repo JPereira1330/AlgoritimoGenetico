@@ -6,7 +6,6 @@
 #define DEF_MAX_LEN_NAME        125
 #define DEF_MAX_LEN_ITENS       6200
 #define DEF_MAX_LEN_POPULATION  1000
-#define DEF_MULT_MATE           4                       /// Cruzamento da populacao devera ser feito nesta multiplicacao
 #define DEF_DATABASE_NAME       "data/drugs.db"
 
 typedef struct stc_data_base {
