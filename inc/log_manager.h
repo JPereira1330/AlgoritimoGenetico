@@ -6,18 +6,25 @@
 #include <stdarg.h>
 #include <unistd.h>
 
+#define DEBUG 0
+
 #define FAIL 0
 #define DONE 1
 #define INIT 2
 #define PROG 3
 
 #define log(PARAM, TAG, D_FORMAT, ...) log_write_i(PARAM, TAG, __FILE__, __LINE__, D_FORMAT, ##__VA_ARGS__)
+#define log_epoch(PARAM, EPOCH, D_FORMAT, ...) log_write_epoch_i(PARAM, EPOCH, __FILE__, __LINE__, D_FORMAT, ##__VA_ARGS__)
 
 void log_write_i(PARAM param, int tag, const char *fileName, int line, const char *format, ...){
     clock_t end;
     char buf[1024];
     double time_spent = 0.0;
     
+    if(DEBUG != 1) {
+        return;
+    }
+
     va_list vl;
     va_start(vl, format);
 
@@ -42,10 +49,32 @@ void log_write_i(PARAM param, int tag, const char *fileName, int line, const cha
     }
 
     if(tag == INIT || tag == PROG) {
-        printf("~> \033[1m%s\033[0m {%s:%d}\r",buf,fileName, line);
+        printf("\033[1m%s\033[0m ~> %s:%d\r",buf,fileName, line);
     } else {
-        printf("~> \033[1m%s\033[0m {%s:%d}\n",buf,fileName, line);
+        printf("\033[1m%s\033[0m ~> %s:%d\n",buf,fileName, line);
     }
+    va_end( vl);
+}
+
+void log_write_epoch_i(PARAM param, int epoch, const char *fileName, int line, const char *format, ...){
+    clock_t end;
+    char buf[1024];
+    double time_spent = 0.0;
+    
+    if(DEBUG != 1) {
+        return;
+    }
+
+    va_list vl;
+    va_start(vl, format);
+
+    end = clock();
+    time_spent += (double)(end - param->begin) / CLOCKS_PER_SEC;
+
+    vsnprintf( buf, sizeof( buf), format, vl);
+    printf("[\033[33m%f\033[0m] ", time_spent);
+    printf("[\033[34mEPOCH %d\033[0m] ", epoch);
+    printf("\033[1m%s\033[0m ~> %s:%d\n",buf,fileName, line);
     va_end( vl);
 }
 

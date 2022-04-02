@@ -14,7 +14,9 @@
         "string.h": "c",
         "cmath": "c",
         "typeinfo": "c",
-        "cstdio": "c"
+        "cstdio": "c",
+        "log_manager.h": "c",
+        "unistd.h": "c"
     },
     "C_Cpp.errorSquiggles": "Disabled",
     "C_Cpp.intelliSenseEngine": "Tag Parser",

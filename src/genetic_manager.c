@@ -15,12 +15,6 @@
 #include "file_manager.h"
 
 //////////////////////////////////////////
-///     VARIAVEIS GLOBAIS
-//////////////////////////////////////////
-
-PERSON new_pop[DEF_MAX_LEN_POPULATION];
-
-//////////////////////////////////////////
 ///     DECLARACAO DOS METODOS PRIVADOS
 //////////////////////////////////////////
 
@@ -42,11 +36,13 @@ bool genetic_manager_create_population(PARAM param, PERSON *population, int amou
     return true;
 }
 
-bool genetic_manager_mate_population(PARAM param, PERSON *population, int amount_population) {
+bool genetic_manager_mate_population(PARAM param, PERSON *population, PERSON *new_pop) {
     int index_init;
 
     log(param, INIT, "Cruzando populacao");
-    for(int index = 0; index < DEF_MAX_LEN_POPULATION; index++) {
+
+    memset(new_pop, 0, sizeof(PERSON)* DEF_MAX_MULT_POP);
+    for(int index = 0; index < DEF_MAX_MULT_POP; index++) {
         index_init = index+1;
         for(int i_itens = 0; i_itens < DEF_MAX_LEN_ITENS; i_itens++) {
             for(int i_pop = index_init; i_pop <= index_init; i_pop++) {
@@ -64,19 +60,103 @@ bool genetic_manager_mate_population(PARAM param, PERSON *population, int amount
     }
     log(param, DONE, "Cruzando populacao");
 
+    return true;
+}
+
+bool genetic_manager_calc_fit(PARAM param, PERSON *population, int amount_population) {
     log(param, INIT, "Atualizando valores da nova populacao");
-    for(int i_pop = 0; i_pop < DEF_MAX_LEN_POPULATION; i_pop++) {
-        new_pop[i_pop].total_value = 0;
-        new_pop[i_pop].amount_itens = 0;
+    for(int i_pop = 0; i_pop < amount_population; i_pop++) {
+        population[i_pop].total_value = 0;
+        population[i_pop].amount_itens = 0;
         for(int i_itens = 0; i_itens < DEF_MAX_LEN_ITENS; i_itens++) {
-            if(new_pop[i_pop].itens[i_itens]){
-                new_pop[i_pop].amount_itens++;
-                new_pop[i_pop].total_value+=param->db_itens[i_itens].value;
+            if(population[i_pop].itens[i_itens]){
+                population[i_pop].amount_itens++;
+                population[i_pop].total_value+=param->db_itens[i_itens].value;
             }
         }
     } 
     log(param, DONE, "Atualizando valores da nova populacao");
+    return true;
+}
 
+bool genetic_manager_fix_population(PARAM param, PERSON *population, PERSON *new_pop, int amount_population) {
+
+    int index;
+    int quant;
+    bool selected[DEF_MAX_LEN_ITENS];
+
+    memset(selected, 0, sizeof(bool)*DEF_MAX_LEN_ITENS);
+    for(int repeat = 0; repeat < amount_population; repeat++ ) {
+        quant = 0;
+        index = 0;
+        for(int i_pop = 0; i_pop < amount_population; i_pop++) {
+            if(selected[i_pop] == false){
+                if(quant < new_pop[i_pop].amount_itens) {
+                    index = i_pop;
+                    quant = new_pop[i_pop].amount_itens;
+                }
+            }
+        }
+        selected[index] = true;
+        for(int i = 0; i < DEF_MAX_LEN_ITENS; i++) {
+            population[repeat].itens[i] = new_pop[index].itens[i];
+        }
+    }
+    
+    genetic_manager_calc_fit(param, population, amount_population);
+
+    return true;
+}
+
+/// ! Otimizar
+bool genetic_manager_kill_population(PARAM param, PERSON *population, int amount_population) {
+    bool killed[DEF_MAX_MULT_POP];
+
+    memset(killed, 0, sizeof(bool) * DEF_MAX_MULT_POP);
+    for(int i_pop = 0; i_pop < amount_population; i_pop++) {
+        if(population[i_pop].total_value > param->budget) {
+            killed[i_pop] = true;
+        }
+    }
+
+    for(int i_pop = 0; i_pop < amount_population; i_pop++) {
+
+        if(killed[i_pop] == false) {
+            continue;
+        }
+
+        population[i_pop].total_value = 0;
+        population[i_pop].amount_itens = 0;
+        for(int i_itens = 0; i_itens < DEF_MAX_LEN_ITENS; i_itens++) {
+            population[i_pop].itens[i_itens] = 0;
+        }
+
+    }
+
+    return true;
+}
+
+bool genetic_manager_show_better(PARAM param, PERSON *population, int amount_population, int amount_to_show) {
+    int index;
+    int quant;
+    bool selected[DEF_MAX_LEN_ITENS];
+
+    memset(selected, 0, sizeof(bool)*DEF_MAX_LEN_ITENS);
+    for(int repeat = 0; repeat < amount_to_show; repeat++ ) {
+        quant = 0;
+        index = 0;
+        for(int i_pop = 0; i_pop < amount_population; i_pop++) {
+            if(selected[i_pop] == false){
+                if(quant < population[i_pop].amount_itens) {
+                    index = i_pop;
+                    quant = population[i_pop].amount_itens;
+                }
+            }
+        }
+        selected[index] = true;
+        printf("[%d;%d;R$%2.f]", index, population[index].amount_itens, population[index].total_value);
+    }
+    printf("\n");
     return true;
 }
 
@@ -159,6 +239,26 @@ bool _genetic_manager_active_random(PARAM param, PERSON *population, int amount_
         }while(true);
     }
 
-    log(param, DONE, "Gerando aleatoriamente a populacao (Populacao: %d / Itens: %d)", amount_population, DEF_MAX_LEN_ITENS);
+    log(param, DONE, "Gerado aleatoriamente a populacao (Populacao: %d / Itens: %d)", amount_population, DEF_MAX_LEN_ITENS);
     return true;
 }
+
+/*
+bool _genetic_manager_active_random(PARAM param, PERSON *population, int amount_population) {
+    long index,j;
+
+    log(param, INIT, "Gerando aleatoriamente a populacao (Populacao: %d / Itens: %d)", amount_population, DEF_MAX_LEN_ITENS);
+
+    srand(time(0));
+    j = rand() % DEF_MAX_INIT_ITENS;
+    for(int i = 0; i < amount_population; i++) {
+        index = 0;
+        for(int k = 0; k < j; k++) {
+            index = rand() % DEF_MAX_INIT_ITENS;
+            population[i].itens[index] = true;
+        }
+    }
+
+    log(param, DONE, "Gerando aleatoriamente a populacao (Populacao: %d / Itens: %d)", amount_population, DEF_MAX_LEN_ITENS);
+    return true;
+}*/

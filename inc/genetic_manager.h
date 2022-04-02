@@ -33,9 +33,13 @@ bool genetic_manager_create_population(PARAM param, PERSON *population, int amou
  * @return true                 Para sucesso na operacao
  * @return false                Para erro na operacao
  */
-bool genetic_manager_mate_population(PARAM param, PERSON *population, int amount_population);
+bool genetic_manager_mate_population(PARAM param, PERSON *population, PERSON *new_pop);
 
+bool genetic_manager_calc_fit(PARAM param, PERSON *population, int amount_population);
+bool genetic_manager_show_better(PARAM param, PERSON *population, int amount_population, int amount_to_show);
+bool genetic_manager_kill_population(PARAM param, PERSON *population, int amount_population);
+bool genetic_manager_fix_population(PARAM param, PERSON *population, PERSON *new_pop, int amount_population);
 void genetic_manager_mutable_population();
-void genetic_manager_kill_population();
+
 
 #endif  // _INC_GENETIC_MANAGER_H_
