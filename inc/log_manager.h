@@ -48,11 +48,11 @@ void log_write_i(PARAM param, int tag, const char *fileName, int line, const cha
             break;
     }
 
-    if(tag == INIT || tag == PROG) {
-        printf("\033[1m%s\033[0m ~> %s:%d\r",buf,fileName, line);
-    } else {
+    //if(tag == INIT || tag == PROG) {
+    //    printf("\033[1m%s\033[0m ~> %s:%d\r",buf,fileName, line);
+    //} else {
         printf("\033[1m%s\033[0m ~> %s:%d\n",buf,fileName, line);
-    }
+    //}
     va_end( vl);
 }
 

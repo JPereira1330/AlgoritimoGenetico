@@ -6,9 +6,9 @@
 #define DEF_MAX_LEN_NAME        125
 #define DEF_MAX_LEN_ITENS       6200
 #define DEF_MAX_LEN_POPULATION  1000
-
-#define DEF_MAX_MULT_POP        DEF_MAX_LEN_POPULATION*4
 #define DEF_MAX_INIT_ITENS      5
+
+#define DEF_MAX_BETTER_PASS     5
 
 #define DEF_DATABASE_NAME       "data/drugs.db"
 
