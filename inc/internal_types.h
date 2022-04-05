@@ -8,7 +8,9 @@
 #define DEF_MAX_LEN_POPULATION  1000
 #define DEF_MAX_INIT_ITENS      5
 
-#define DEF_MAX_BETTER_PASS     5
+#define DEF_MAX_BETTER_PASS     100
+#define DEF_MAX_MATE_PASS       400
+#define DEF_MAX_MUTABLE_PASS    500
 
 #define DEF_DATABASE_NAME       "data/drugs.db"
 
@@ -22,6 +24,7 @@ typedef struct stc_dna_person {
     bool itens[DEF_MAX_LEN_ITENS];
     int amount_itens;
     float total_value; 
+    bool killed;
 } PERSON;
 
 #endif  // _INC_INTERNAL_TYPES_H_

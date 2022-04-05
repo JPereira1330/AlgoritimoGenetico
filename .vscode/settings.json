@@ -16,7 +16,10 @@
         "typeinfo": "c",
         "cstdio": "c",
         "log_manager.h": "c",
-        "unistd.h": "c"
+        "unistd.h": "c",
+        "algorithm": "c",
+        "utils.h": "c",
+        "random": "c"
     },
     "C_Cpp.errorSquiggles": "Disabled",
     "C_Cpp.intelliSenseEngine": "Tag Parser",

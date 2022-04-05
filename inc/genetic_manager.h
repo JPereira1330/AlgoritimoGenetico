@@ -13,33 +13,16 @@
 #include "param.h"
 #include "internal_types.h"
 
-/**
- * @brief Carrega do banco de dados e preenche os dados de forma aleatoria
- * 
- * @param param                 Parametros do sistema
- * @param population            Ponteiro da populacao
- * @param amount_population     Tamanho da populacao 
- * @return true                 Para sucesso na operacao
- * @return false                Para erro na operacao
- */
-bool genetic_manager_create_population(PARAM param, PERSON *population, int amount_population);
+int genetic_manager_create_population(PARAM param, PERSON *population, int amount_population);
 
-/**
- * @brief 
- * 
- * @param param                 Parametros do sistema
- * @param population            Ponteiro da populacao
- * @param amount_population     Tamanho da populacao 
- * @return true                 Para sucesso na operacao
- * @return false                Para erro na operacao
- */
-bool genetic_manager_mate_population(PARAM param, PERSON *population, PERSON *new_pop);
+int genetic_manager_mate_population(PARAM param, PERSON *population, PERSON *new_pop, int amount_population);
 
 bool genetic_manager_calc_fit(PARAM param, PERSON *population, int amount_population);
-bool genetic_manager_show_better(PARAM param, PERSON *population, int amount_population, int amount_to_show);
-bool genetic_manager_kill_population(PARAM param, PERSON *population, int amount_population);
-bool genetic_manager_fix_population(PARAM param, PERSON *population, PERSON *new_pop, int amount_population);
-void genetic_manager_mutable_population();
+bool genetic_manager_show_better(PARAM param, PERSON *population, int amount_to_show);
+bool genetic_manager_show_all(PARAM param, PERSON *population, int amount_to_show);
+int genetic_manager_kill_population(PARAM param, PERSON *population, int amount_population);
+int genetic_manager_fix_population(PARAM param, PERSON *population, PERSON *new_pop, PERSON *mut_pop, int amount_population);
+int genetic_manager_mutable_population(PARAM param, PERSON *population, PERSON *mult_pop, int amount_population);
 
 
 #endif  // _INC_GENETIC_MANAGER_H_
