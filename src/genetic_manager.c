@@ -27,7 +27,6 @@ PERSON person_aux[DEF_MAX_LEN_POPULATION];
 bool _genetic_manager_load_database(PARAM param);
 bool _genetic_manager_init_pop(PARAM param, PERSON *population, int amount_population);
 bool _genetic_manager_active_random(PARAM param, PERSON *population, int amount_population);
-bool _genetic_manager_get_better(PARAM param, PERSON* population, PERSON* pop_out);
 int _genetic_manager_change_to_new_array(PARAM param, PERSON *population, PERSON *pop_out, int amount_population, int init);
 
 //////////////////////////////////////////
@@ -110,22 +109,18 @@ bool genetic_manager_calc_fit(PARAM param, PERSON *population, int amount_popula
 }
 
 int genetic_manager_fix_population(PARAM param, PERSON *population, PERSON *new_pop, PERSON *mut_pop, int amount_population) {
-    int index_init;
 
-    _genetic_manager_get_better(param, population, person_aux);
-    index_init = _genetic_manager_change_to_new_array(param, person_aux, population, amount_population, 0);
-    memset(person_aux, 0, sizeof(PERSON) * DEF_MAX_LEN_POPULATION);
+    int last_new_pop;
 
-    // Atribuindo dados novos para proxima geracao
-    _genetic_manager_get_better(param, new_pop, person_aux);
-    index_init = _genetic_manager_change_to_new_array(param, person_aux, population, DEF_MAX_MATE_PASS, index_init);
-    memset(person_aux, 0, sizeof(PERSON) * DEF_MAX_LEN_POPULATION);
+    last_new_pop = DEF_MAX_BETTER_PASS+DEF_MAX_MATE_PASS;
 
-    // Atribuindo mutacoes para proxima geracao
-    _genetic_manager_get_better(param, mut_pop, person_aux);
-    _genetic_manager_change_to_new_array(param, person_aux, population,DEF_MAX_MUTABLE_PASS, index_init);
     memset(person_aux, 0, sizeof(PERSON) * DEF_MAX_LEN_POPULATION);
-    
+    utils_array_add_array(param, person_aux, population, 0, DEF_MAX_BETTER_PASS);
+    utils_array_add_array(param, person_aux, new_pop, DEF_MAX_BETTER_PASS, last_new_pop);
+    utils_array_add_array(param, person_aux, mut_pop, last_new_pop, DEF_MAX_LEN_POPULATION);
+
+    utils_array_get_better(param, person_aux, population);
+
     return DEF_MAX_LEN_POPULATION;
 }
 
@@ -276,40 +271,6 @@ bool _genetic_manager_active_random(PARAM param, PERSON *population, int amount_
     }
 
     log(param, DONE, "Gerado aleatoriamente a populacao (Populacao: %d / Itens: %d)", amount_population, DEF_MAX_LEN_ITENS);
-    return true;
-}
-
-bool _genetic_manager_get_better(PARAM param, PERSON* population, PERSON* pop_out) {
-
-    int value_max;
-    int index_max;
-    int amount_pop;
-    bool selected[DEF_MAX_LEN_POPULATION];
-
-    memset(selected, 0, sizeof(bool) * DEF_MAX_LEN_POPULATION);
-    amount_pop = utils_array_get_population(population);
-
-    for (int index = 0; index < amount_pop; index++) {
-        value_max = 0;
-        index_max = 0;
-        for (int index_pop = 0; index_pop < amount_pop; index_pop++) {
-            if (selected[index_pop] == true)
-                continue;
-            if (value_max < population[index_pop].amount_itens) {
-                index_max = index_pop;
-                value_max = population[index_pop].amount_itens;
-            }
-        }
-
-        /// Realizando atribuincoes
-        selected[index_max] = true;
-        pop_out[index].total_value = population[index_max].total_value;
-        pop_out[index].amount_itens = population[index_max].amount_itens;
-        for (int index_iten = 0; index_iten < DEF_MAX_LEN_ITENS; index_iten++) {
-            pop_out[index].itens[index_iten] = population[index_max].itens[index_iten];
-        }
-    }
-
     return true;
 }
 

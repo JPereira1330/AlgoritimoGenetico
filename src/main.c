@@ -24,32 +24,24 @@ int main(void) {
         return EXIT_FAILURE;
     }
 
-    param->epoch    = 15;
+    param->epoch    = 1500;
     param->budget   = 5000;
 
     /// Criando populacao do zero
     amount_tot = genetic_manager_create_population(param, person, DEF_MAX_LEN_POPULATION);
 
     for (int i = 1; i < param->epoch; i++) {
-        printf("==========================\n");
-        printf("Epoch: %d \n", i);
+        printf("Epoch: %d ", i);
 
-        printf("NEW: ");
-        genetic_manager_show_better(param, person, 10);
         amount_new = genetic_manager_mate_population(param, person, new_pop, amount_tot);       /// Crusando a populacao
         genetic_manager_kill_population(param, new_pop, amount_new);                            /// Matando o excesso
-        printf("MAT: ");
-        genetic_manager_show_better(param, new_pop, 10);
 
         amount_mut = genetic_manager_mutable_population(param, new_pop, mut_pop, amount_tot);    /// Mutando a populacao
         genetic_manager_kill_population(param, mut_pop, amount_mut);                            /// Matando o excesso
-        printf("MUT: ");
-        genetic_manager_show_better(param, mut_pop, 10);
 
         amount_tot = genetic_manager_fix_population(param, person, new_pop, mut_pop, DEF_MAX_LEN_POPULATION);    /// Convergindo
+        genetic_manager_show_better(param, person, 10);
     }
-    printf("RES: ");
-    genetic_manager_show_better(param, person, 15);
     param_free(param);
 
     return 0;
