@@ -24,7 +24,7 @@ int main(void) {
         return EXIT_FAILURE;
     }
 
-    param->epoch    = 1500;
+    param->epoch    = 50;
     param->budget   = 5000;
 
     /// Criando populacao do zero
@@ -40,7 +40,8 @@ int main(void) {
         genetic_manager_kill_population(param, mut_pop, amount_mut);                            /// Matando o excesso
 
         amount_tot = genetic_manager_fix_population(param, person, new_pop, mut_pop, DEF_MAX_LEN_POPULATION);    /// Convergindo
-        genetic_manager_show_better(param, person, 10);
+        genetic_manager_show_better(param, person, 9);
+        genetic_manager_save_report(param, person, 1);
     }
     param_free(param);
 

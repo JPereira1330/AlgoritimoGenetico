@@ -10,6 +10,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdarg.h>
+#include <unistd.h>
 
 #include "utils.h"
 #include "log_manager.h"
@@ -23,7 +25,7 @@ PERSON person_aux[DEF_MAX_LEN_POPULATION];
 //////////////////////////////////////////
 ///     DECLARACAO DOS METODOS PRIVADOS
 //////////////////////////////////////////
-
+int my_round(double number);
 bool _genetic_manager_load_database(PARAM param);
 bool _genetic_manager_init_pop(PARAM param, PERSON *population, int amount_population);
 bool _genetic_manager_active_random(PARAM param, PERSON *population, int amount_population);
@@ -175,6 +177,46 @@ bool genetic_manager_show_better(PARAM param, PERSON *population, int amount_to_
     return true;
 }
 
+bool genetic_manager_save_report(PARAM param, PERSON *population, int amount_to_show) {
+    int index;
+    int quant;
+    int len_pop;
+    FILE *fp;
+    char buffer[25];
+    bool selected[DEF_MAX_LEN_ITENS];
+    clock_t end;
+    double time_spent = 0.0;
+    int around_time;
+
+    fp = file_manager_open("teste.csv", "a+");
+    end = clock();
+    time_spent += (double)(end - param->begin) / CLOCKS_PER_SEC;
+    around_time = my_round(time_spent);
+    //around_time = my_round(around_time/60);
+
+    len_pop = utils_array_get_population(population);
+    memset(selected, 0, sizeof(bool)*DEF_MAX_LEN_ITENS);
+    for(int repeat = 0; repeat < amount_to_show; repeat++ ) {
+        quant = 0;
+        index = 0;
+        for(int i_pop = 0; i_pop < len_pop; i_pop++) {
+            if(selected[i_pop] == false){
+                if(quant < population[i_pop].amount_itens) {
+                    index = i_pop;
+                    quant = population[i_pop].amount_itens;
+                }
+            }
+        }
+        if(selected[index] == false){
+            selected[index] = true;
+            snprintf(buffer, sizeof(buffer), "%d,%d,%.2f\n", population[index].amount_itens, around_time, population[index].total_value);
+            file_manager_write(fp, buffer, strlen(buffer));
+            memset(buffer, 0, sizeof(buffer));
+        }
+    }
+    file_manager_close(fp);
+    return true;
+}
 
 bool genetic_manager_show_all(PARAM param, PERSON *population, int amount_to_show) {
     int len_pop;
@@ -318,4 +360,11 @@ int _genetic_manager_change_to_new_array(PARAM param, PERSON *population, PERSON
     }
     memset(population+index_total, 0, sizeof(PERSON) * index_total);
     return index_total;
+}
+
+int my_round(double number) {
+    int round;
+    //return (number >= 0) ? (int)(number + 0.5) : (int)(number - 0.5);
+    round = (number >= 0) ? (int)(number + 0.5) : (int)(number - 0.5);
+    return round;
 }
